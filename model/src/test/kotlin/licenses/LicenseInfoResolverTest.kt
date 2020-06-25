@@ -109,9 +109,7 @@ class LicenseInfoResolverTest : WordSpec() {
                 result should containLocationForLicense(
                     license = "Apache-2.0 WITH LLVM-exception",
                     provenance = provenance,
-                    path = "LICENSE",
-                    startLine = 1,
-                    endLine = 1,
+                    location = TextLocation("LICENSE", 1, 1),
                     copyrights = setOf(
                         ResolvedCopyright(
                             statement = "Copyright Apache-2.0",
@@ -129,17 +127,13 @@ class LicenseInfoResolverTest : WordSpec() {
                 result should containLocationForLicense(
                     license = "Apache-2.0 WITH LLVM-exception",
                     provenance = provenance,
-                    path = "LICENSE",
-                    startLine = 21,
-                    endLine = 21
+                    location = TextLocation("LICENSE", 21, 21)
                 )
                 result should containNumberOfLocationsForLicense("MIT", 2)
                 result should containLocationForLicense(
                     license = "MIT",
                     provenance = provenance,
-                    path = "LICENSE",
-                    startLine = 31,
-                    endLine = 31,
+                    location = TextLocation("LICENSE", 31, 31),
                     copyrights = setOf(
                         ResolvedCopyright(
                             statement = "Copyright MIT",
@@ -157,9 +151,7 @@ class LicenseInfoResolverTest : WordSpec() {
                 result should containLocationForLicense(
                     license = "MIT",
                     provenance = provenance,
-                    path = "LICENSE",
-                    startLine = 41,
-                    endLine = 41
+                    location = TextLocation("LICENSE", 41, 41)
                 )
             }
 
@@ -429,9 +421,7 @@ fun containNumberOfLocationsForLicense(license: String, count: Int): Matcher<Res
 fun containLocationForLicense(
     license: String,
     provenance: Provenance,
-    path: String,
-    startLine: Int,
-    endLine: Int,
+    location: TextLocation,
     appliedCuration: LicenseFindingCuration? = null,
     matchingPathExcludes: List<PathExclude> = emptyList(),
     copyrights: Set<ResolvedCopyright> = emptySet()
@@ -440,9 +430,7 @@ fun containLocationForLicense(
         val expectedLocation =
             ResolvedLicenseLocation(
                 provenance,
-                path,
-                startLine,
-                endLine,
+                location,
                 appliedCuration,
                 matchingPathExcludes,
                 copyrights
