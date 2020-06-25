@@ -117,6 +117,7 @@ class LicenseInfoResolverTest : WordSpec() {
                                 ResolvedCopyrightFinding(
                                     statement = "Copyright Apache-2.0",
                                     location = TextLocation("LICENSE", 1, 1),
+                                    matchingPathExcludes = emptyList(),
                                     isGarbage = false
                                 )
                             ),
@@ -141,6 +142,7 @@ class LicenseInfoResolverTest : WordSpec() {
                                 ResolvedCopyrightFinding(
                                     statement = "Copyright MIT",
                                     location = TextLocation("LICENSE", 31, 31),
+                                    matchingPathExcludes = emptyList(),
                                     isGarbage = false
                                 )
                             ),
