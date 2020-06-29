@@ -40,8 +40,12 @@ class SimplePackageConfigurationProvider(
          * Return a [SimplePackageConfigurationProvider] which provides all [PackageConfiguration]s found recursively
          * in the given [directory]. All non-hidden files within the given [directory] must be package curation files.
          * Throws an exception if there is more than one configuration per [Identifier] and [Provenance].
+         * Additional configurations can be provided via [configurations].
          */
-        fun forDirectory(directory: File): SimplePackageConfigurationProvider {
+        fun forDirectory(
+            directory: File,
+            configurations: List<PackageConfiguration>
+        ): SimplePackageConfigurationProvider {
             val entries = directory.walkBottomUp()
                 .filterTo(mutableListOf()) { !it.isHidden && it.isFile }
                 .map { file ->
@@ -52,17 +56,18 @@ class SimplePackageConfigurationProvider(
                     }
                 }
 
-            return SimplePackageConfigurationProvider(entries)
+            return SimplePackageConfigurationProvider(entries + configurations)
         }
 
         /**
          * Return a [SimplePackageConfigurationProvider] which provides all [PackageConfiguration]s found in the given
          * file. Throws an exception if there is more than one configuration per [Identifier] and [Provenance].
+         * Additional configurations can be provided via [configurations].
          */
-        fun forFile(file: File): SimplePackageConfigurationProvider {
+        fun forFile(file: File, configurations: List<PackageConfiguration>): SimplePackageConfigurationProvider {
             val entries = file.readValue<List<PackageConfiguration>>()
 
-            return SimplePackageConfigurationProvider(entries)
+            return SimplePackageConfigurationProvider(entries + configurations)
         }
     }
 

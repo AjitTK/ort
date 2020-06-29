@@ -49,6 +49,7 @@ import org.ossreviewtoolkit.model.licenses.LicenseInfoResolver
 import org.ossreviewtoolkit.model.licenses.orEmpty
 import org.ossreviewtoolkit.model.readValue
 import org.ossreviewtoolkit.model.utils.DefaultResolutionProvider
+import org.ossreviewtoolkit.model.utils.getProjectConfigurations
 import org.ossreviewtoolkit.reporter.DefaultLicenseTextProvider
 import org.ossreviewtoolkit.reporter.Reporter
 import org.ossreviewtoolkit.reporter.ReporterInput
@@ -174,7 +175,8 @@ class ReporterCommand : CliktCommand(
 
         val copyrightGarbage = copyrightGarbageFile?.readValue<CopyrightGarbage>().orEmpty()
 
-        val packageConfigurationProvider = packageConfigurationOption.createProvider()
+        val packageConfigurationProvider =
+            packageConfigurationOption.createProvider(ortResult.getProjectConfigurations())
 
         val licenseInfoResolver = LicenseInfoResolver(
             provider = DefaultLicenseInfoProvider(ortResult),

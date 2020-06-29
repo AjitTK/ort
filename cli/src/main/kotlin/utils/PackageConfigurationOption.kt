@@ -19,6 +19,7 @@
 
 package org.ossreviewtoolkit.utils
 
+import org.ossreviewtoolkit.model.config.PackageConfiguration
 import org.ossreviewtoolkit.model.utils.PackageConfigurationProvider
 import org.ossreviewtoolkit.model.utils.SimplePackageConfigurationProvider
 
@@ -27,9 +28,11 @@ internal sealed class PackageConfigurationOption {
     data class File(val value: java.io.File) : PackageConfigurationOption()
 }
 
-internal fun PackageConfigurationOption?.createProvider(): PackageConfigurationProvider =
+internal fun PackageConfigurationOption?.createProvider(
+    configurations: List<PackageConfiguration> = emptyList()
+): PackageConfigurationProvider =
     when (this) {
-        is PackageConfigurationOption.Dir -> SimplePackageConfigurationProvider.forDirectory(value)
-        is PackageConfigurationOption.File -> SimplePackageConfigurationProvider.forFile(value)
-        null -> SimplePackageConfigurationProvider()
+        is PackageConfigurationOption.Dir -> SimplePackageConfigurationProvider.forDirectory(value, configurations)
+        is PackageConfigurationOption.File -> SimplePackageConfigurationProvider.forFile(value, configurations)
+        null -> SimplePackageConfigurationProvider(configurations)
     }

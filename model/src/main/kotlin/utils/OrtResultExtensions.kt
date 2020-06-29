@@ -22,7 +22,13 @@ package org.ossreviewtoolkit.model.utils
 import org.ossreviewtoolkit.model.Identifier
 import org.ossreviewtoolkit.model.LicenseFindings
 import org.ossreviewtoolkit.model.OrtResult
+import org.ossreviewtoolkit.model.Provenance
+import org.ossreviewtoolkit.model.VcsInfo
+import org.ossreviewtoolkit.model.config.LicenseFindingCuration
+import org.ossreviewtoolkit.model.config.PackageConfiguration
 import org.ossreviewtoolkit.model.config.PathExclude
+import org.ossreviewtoolkit.model.config.RepositoryConfiguration
+import org.ossreviewtoolkit.model.config.VcsMatcher
 
 import java.util.SortedSet
 
@@ -84,3 +90,32 @@ fun OrtResult.getDetectedLicensesWithCopyrights(
     omitExcluded: Boolean = true
 ): Map<String, Set<String>> =
     LicenseResolver(this, packageConfigurationProvider).getDetectedLicensesWithCopyrights(id, omitExcluded)
+
+/**
+ * Create [PackageConfiguration]s for the projects in this [OrtResult]. [PathExclude]s and [LicenseFindingCuration]s are
+ * taken from the [RepositoryConfiguration]. The [Provenance] is taken from the scan results. Projects without scan
+ * result are ignored.
+ */
+fun OrtResult.getProjectConfigurations(): List<PackageConfiguration> {
+    fun VcsInfo.toMatcher() = VcsMatcher(
+        type = type,
+        url = url,
+        revision = resolvedRevision ?: revision,
+        path = path
+    )
+
+    return analyzer?.result?.projects.orEmpty().flatMap { project ->
+        getScanResultsForId(project.id).map { scanResult ->
+            val sourceArtifactUrl = scanResult.provenance.sourceArtifact?.url
+            val vcs = scanResult.provenance.vcsInfo?.toMatcher()
+
+            PackageConfiguration(
+                id = project.id,
+                sourceArtifactUrl = sourceArtifactUrl,
+                vcs = vcs,
+                pathExcludes = repository.config.excludes.paths,
+                licenseFindingCurations = repository.config.curations.licenseFindings
+            )
+        }
+    }
+}

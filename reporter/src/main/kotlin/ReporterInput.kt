@@ -31,6 +31,7 @@ import org.ossreviewtoolkit.model.utils.DefaultResolutionProvider
 import org.ossreviewtoolkit.model.utils.PackageConfigurationProvider
 import org.ossreviewtoolkit.model.utils.ResolutionProvider
 import org.ossreviewtoolkit.model.utils.SimplePackageConfigurationProvider
+import org.ossreviewtoolkit.model.utils.getProjectConfigurations
 import org.ossreviewtoolkit.reporter.reporters.AbstractNoticeReporter
 
 /**
@@ -50,7 +51,9 @@ data class ReporterInput(
     /**
      * A [PackageConfigurationProvider], can be used to obtain [PackageConfiguration]s for packages.
      */
-    val packageConfigurationProvider: PackageConfigurationProvider = SimplePackageConfigurationProvider(),
+    val packageConfigurationProvider: PackageConfigurationProvider = SimplePackageConfigurationProvider(
+        ortResult.getProjectConfigurations()
+    ),
 
     /**
      * A [ResolutionProvider], can be used to check which [OrtIssue]s and [RuleViolation]s are resolved.
