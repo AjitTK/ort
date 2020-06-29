@@ -88,7 +88,7 @@ class LicenseInfoResolver(
             }
         }
 
-        return ResolvedLicenseInfo(id, resolvedLicenses.values.map { it.build() }, unmatchedCopyrights)
+        return ResolvedLicenseInfo(id, licenseInfo, resolvedLicenses.values.map { it.build() }, unmatchedCopyrights)
     }
 
     private fun resolveLocations(
