@@ -43,7 +43,9 @@ import org.ossreviewtoolkit.model.config.CopyrightGarbage
 import org.ossreviewtoolkit.model.config.OrtConfiguration
 import org.ossreviewtoolkit.model.config.Resolutions
 import org.ossreviewtoolkit.model.config.orEmpty
+import org.ossreviewtoolkit.model.licenses.DefaultLicenseInfoProvider
 import org.ossreviewtoolkit.model.licenses.LicenseConfiguration
+import org.ossreviewtoolkit.model.licenses.LicenseInfoResolver
 import org.ossreviewtoolkit.model.licenses.orEmpty
 import org.ossreviewtoolkit.model.readValue
 import org.ossreviewtoolkit.model.utils.DefaultResolutionProvider
@@ -174,6 +176,12 @@ class ReporterCommand : CliktCommand(
 
         val packageConfigurationProvider = packageConfigurationOption.createProvider()
 
+        val licenseInfoResolver = LicenseInfoResolver(
+            provider = DefaultLicenseInfoProvider(ortResult),
+            packageConfigurationProvider = packageConfigurationProvider,
+            copyrightGarbage = copyrightGarbage
+        )
+
         val licenseConfiguration = licenseConfigurationFile?.readValue<LicenseConfiguration>().orEmpty()
 
         absoluteOutputDir.safeMkdirs()
@@ -185,6 +193,7 @@ class ReporterCommand : CliktCommand(
             resolutionProvider,
             DefaultLicenseTextProvider(customLicenseTextsDir),
             copyrightGarbage,
+            licenseInfoResolver,
             licenseConfiguration,
             preProcessingScript?.readText()
         )
